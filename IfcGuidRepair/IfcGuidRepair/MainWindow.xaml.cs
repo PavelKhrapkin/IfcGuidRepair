@@ -84,7 +84,7 @@ namespace IfcGuidRepair
             file.Close();
 
             // Suspend the screen.
-            Console.ReadLine();
+//25/8/17            Console.ReadLine();
         }
 
         private static void writeLine(string line, string ifcGuid = "")
