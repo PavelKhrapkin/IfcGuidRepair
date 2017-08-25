@@ -20,11 +20,18 @@ namespace IfcGuidRepair
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        public string path = string.Empty;
+
+        static StreamReader file;
+        static StreamWriter outFile;
+
+        static HashSet<string> guids = new HashSet<string>();
+
         public MainWindow()
         {
             InitializeComponent();
-            string path = GetFilePath();
-            HandleIfc(path);
+ //25/8           HandleIfc();
         }
 
         private string GetFilePath()
@@ -51,13 +58,76 @@ namespace IfcGuidRepair
             }
         }
 
-        static StreamReader file;
-        static StreamWriter outFile;
-
-        static HashSet<string> guids = new HashSet<string>();
-        private void HandleIfc(string path)
+        private void HandleIfc()
         {
+            if (!File.Exists(path)) throw new Exception("No file \"" + path + "\" exists");
+            string dir = Path.GetDirectoryName(path);
+            string outPath = Path.Combine(dir, "out.ifc");
 
+            ///           string outPath = @"C:\Users\khrapkin\Desktop\out.ifc";
+            outFile = new StreamWriter(outPath);
+
+            int counter = 0;
+            string line;
+
+            // Read the file and display it line by line.
+            StreamReader file = new System.IO.StreamReader(path);
+            while ((line = file.ReadLine()) != null)
+            {
+                if (!isIfcProxy(line))
+                {
+                    writeLine(line);
+                    continue;
+                }
+                string ifcGuid = guid(line);
+                if (guids.Contains(ifcGuid)) ifcGuid = makeUniqueId(ifcGuid); //            throw new Exception("Guid \"" + ifcGuid + "\" in not unique");
+                guids.Add(ifcGuid);
+                writeLine(line, ifcGuid);
+                Console.WriteLine(id(line) + " " + ifcGuid);
+
+                counter++;
+            }
+            Console.WriteLine("=== Total " + counter + " guids ===");
+            file.Close();
+
+            // Suspend the screen.
+            Console.ReadLine();
+        }
+
+        private static void writeLine(string line, string ifcGuid = "")
+        {
+            if (ifcGuid != "")
+            {
+                line = line.Replace(guid(line), ifcGuid);
+            }
+            outFile.WriteLine(line);
+        }
+
+        private static string makeUniqueId(string ifcGuid)
+        {
+            string uniqId = ifcGuid + Path.GetRandomFileName().Replace(".", "").Substring(0, 4);
+            if (guids.Contains(uniqId)) ifcGuid = makeUniqueId(uniqId);
+            return uniqId;
+        }
+
+        private static string id(string line)
+        {
+            int n = line.IndexOf("=");
+            return line.Substring(0, n);
+        }
+
+        private static string guid(string line)
+        {
+            string prefix = "=IFCBUILDINGELEMENTPROXY('";
+            string postfix = "',#";
+            int i0 = line.IndexOf(prefix) + prefix.Length;
+            int lng = line.IndexOf(postfix, i0) - i0;
+            return line.Substring(i0, lng);
+        }
+
+        private static bool isIfcProxy(string line)
+        {
+            return line.Contains("IFCBUILDINGELEMENTPROXY");
         }
     }
 }
