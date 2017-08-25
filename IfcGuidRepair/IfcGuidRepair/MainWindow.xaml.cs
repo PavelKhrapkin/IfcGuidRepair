@@ -31,13 +31,6 @@ namespace IfcGuidRepair
         public MainWindow()
         {
             InitializeComponent();
- //25/8           HandleIfc();
-        }
-
-        private string GetFilePath()
-        {
-            string path = string.Empty;
-            return path;
         }
 
         private void Browse_click(object sender, RoutedEventArgs e)
@@ -58,7 +51,7 @@ namespace IfcGuidRepair
             }
         }
 
-        private void HandleIfc()
+        public void HandleIfc()
         {
             if (!File.Exists(path)) throw new Exception("No file \"" + path + "\" exists");
             string dir = Path.GetDirectoryName(path);
@@ -80,7 +73,7 @@ namespace IfcGuidRepair
                     continue;
                 }
                 string ifcGuid = guid(line);
-                if (guids.Contains(ifcGuid)) ifcGuid = makeUniqueId(ifcGuid); //            throw new Exception("Guid \"" + ifcGuid + "\" in not unique");
+                if (guids.Contains(ifcGuid)) ifcGuid = makeUniqueId(ifcGuid);
                 guids.Add(ifcGuid);
                 writeLine(line, ifcGuid);
                 Console.WriteLine(id(line) + " " + ifcGuid);

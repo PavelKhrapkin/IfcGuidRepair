@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Windows;
 
 namespace IfcGuidRepair
@@ -17,9 +12,12 @@ namespace IfcGuidRepair
         {
             MainWindow wnd = new MainWindow();
             if (e.Args.Length == 1)
+            {
                 wnd.path = e.Args[0];
-//                MessageBox.Show("Now opening file: \n\n" + e.Args[0]);
-            wnd.Show();
+                if (!File.Exists(wnd.path)) wnd.Show();
+                wnd.HandleIfc();
+                Application.Current.Shutdown();
+            } 
         }
     }
 }
