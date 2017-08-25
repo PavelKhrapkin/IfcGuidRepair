@@ -1,0 +1,24 @@
+﻿<Window x:Class="IfcGuidRepair.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:IfcGuidRepair"
+        mc:Ignorable="d"
+        Title="Нормализация Guid IFC файла для Tekla" Height="240" Width="450">
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <Image x:Name="IfcGuidRepair_Logo" HorizontalAlignment="Center" Height="110" Opacity="10"
+                   VerticalAlignment="Top" Width="330" Source="IfcGuidRepair_Logo.jpg" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Height="25" Margin="10,10,10,10">
+                <TextBlock Text="File" Width="Auto" FontSize="16" FontWeight="Bold" Margin="10,0,0,0"/>
+                <TextBox Name="FileNameTextBox" Width="300" FontSize="16" Margin="10,0,0,0"/>
+                <Button Content="Browse" FontSize="16" Margin="10,0,0,0" Click="Browse_click"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Height="25" Margin="10,10,15,10">
+                <Button Content=" ? "/>
+                <Button Content=" About " Margin="10,0,0,0"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
