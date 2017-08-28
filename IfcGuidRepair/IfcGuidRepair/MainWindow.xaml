@@ -20,12 +20,22 @@
                 <TextBox Name="OutFileNameTextBox" Width="275" FontSize="16" Margin="10,0,0,0"/>
                 <Button Content="Browse" FontSize="16" Margin="10,0,0,0" Click="Browse_click"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Height="25" Margin="10,10,15,10">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="25" Margin="10,10,15,10">
                 <Button Content=" Report " Background="Yellow"/>
                 <Button Content=" ? " Margin="15, 0, 0, 0"/>
                 <Button Content=" About " Margin="15,0,0,0"/>
-  <!--              <Button Image.="OK"/>  -->
             </StackPanel>
         </StackPanel>
+        <!-- OK button -->
+        <Button Name="OK" HorizontalAlignment="Right"
+                Margin="10,10,10,2" 
+                VerticalAlignment="Bottom" Width="50" 
+                Click="OK_button_Click" Height="50" 
+                BorderBrush="#FF707070" BorderThickness="0"
+                Grid.Column="2" Grid.Row="2">
+            <Button.Background>
+                <ImageBrush ImageSource="OK.jpg"/>
+            </Button.Background>
+        </Button>
     </Grid>
 </Window>
