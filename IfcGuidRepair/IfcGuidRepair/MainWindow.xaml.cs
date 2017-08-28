@@ -1,5 +1,5 @@
 ﻿/*------------------------------------------------
- * Pavel Khrapkin NIP Informatica 25.08.2017
+ * Pavel Khrapkin NIP Informatica 28.08.2017
  * 
  * IfcRepair - read input Ifc file and correct it with
  * unique set of guids in output file out.ifc by add to
@@ -12,6 +12,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Windows;
+using System.Diagnostics;
 
 namespace IfcGuidRepair
 {
@@ -24,21 +25,31 @@ namespace IfcGuidRepair
         public string InPath;
         public string OutPath;
         public string DirPath;
+        string reportName = "Report.log";
 
-        static StreamReader file;
+        static StreamReader inFile;
         static StreamWriter outFile;
+        static StreamWriter reportFile;
+
+        public bool HandlingComplete = false;
 
         static HashSet<string> guids = new HashSet<string>();
 
         public MainWindow()
         {
             InitializeComponent();
-
+            if(string.IsNullOrWhiteSpace(DirPath) || !Directory.Exists(DirPath))
+                DirPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string[] fileEntries = Directory.GetFiles(DirPath, "*.ifc");
+            InPath = fileEntries[0];
+            InFileNameTextBox.Text = Path.GetFileName(InPath);
+            if (string.IsNullOrWhiteSpace(OutPath))
+                OutPath = Path.Combine(DirPath, "out.ifc");
+            OutFileNameTextBox.Text = Path.GetFileName(OutPath);
         }
 
-        private void Browse_click(object sender, RoutedEventArgs e)
+        private void In_Browse_click(object sender, RoutedEventArgs e)
         {
-            string path = string.Empty;
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             dlg.DefaultExt = ".ifc";
 
@@ -50,25 +61,44 @@ namespace IfcGuidRepair
             {
                 // Open document
                 string filename = dlg.FileName;
-                FileNameTextBox.Text = filename;
+                dlg.InitialDirectory = DirPath;
+                InFileNameTextBox.Text = Path.GetFileName(filename);
+                DirPath = Path.GetDirectoryName(filename);
+            }
+        }
+
+        private void Out_Browse_click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.DefaultExt = ".ifc";
+
+            // Display OpenFileDialog by calling ShowDialog method
+            Nullable<bool> result = dlg.ShowDialog();
+
+            // Get the selected file name and display in a TextBox
+            if (result == true)
+            {
+                // Open document
+                string filename = dlg.FileName;
+                dlg.InitialDirectory = DirPath;
+                OutFileNameTextBox.Text = filename;
             }
         }
 
         public void HandleIfc()
         {
             if (!File.Exists(InPath)) throw new Exception("No file \"" + InPath + "\" exists");
-            string dir = Path.GetDirectoryName(InPath);
-            string outPath = Path.Combine(dir, "out.ifc");
 
-            ///           string outPath = @"C:\Users\khrapkin\Desktop\out.ifc";
-            outFile = new StreamWriter(outPath);
+            outFile = new StreamWriter(OutPath);
+            reportFile = new StreamWriter(Path.Combine(DirPath, reportName));
+            reportFile.WriteLine("=== Report File: Input=" + InPath + ", Output=" + OutPath);
 
-            int counter = 0;
+            int totalGuidsCounter = 0, nonUniqueGuidsCounter = 0;
             string line;
 
             // Read the file and display it line by line.
-            StreamReader file = new System.IO.StreamReader(InPath);
-            while ((line = file.ReadLine()) != null)
+            inFile = new System.IO.StreamReader(InPath);
+            while ((line = inFile.ReadLine()) != null)
             {
                 if (!isIfcProxy(line))
                 {
@@ -76,18 +106,21 @@ namespace IfcGuidRepair
                     continue;
                 }
                 string ifcGuid = guid(line);
-                if (guids.Contains(ifcGuid)) ifcGuid = makeUniqueId(ifcGuid);
+                if (guids.Contains(ifcGuid))
+                {
+                    ifcGuid = makeUniqueId(ifcGuid);
+                    nonUniqueGuidsCounter++;
+                }
                 guids.Add(ifcGuid);
                 writeLine(line, ifcGuid);
-                Console.WriteLine(id(line) + " " + ifcGuid);
+                reportFile.WriteLine(id(line) + " " + ifcGuid);
 
-                counter++;
+                totalGuidsCounter++;
             }
-            Console.WriteLine("=== Total " + counter + " guids ===");
-            file.Close();
-
-            // Suspend the screen.
-//25/8/17            Console.ReadLine();
+            reportFile.WriteLine("=== Total Guids=" + totalGuidsCounter + 
+                " guids, total repaired=" + nonUniqueGuidsCounter +" ===");
+            inFile.Close();
+            reportFile.Close();
         }
 
         private static void writeLine(string line, string ifcGuid = "")
@@ -124,6 +157,19 @@ namespace IfcGuidRepair
         private static bool isIfcProxy(string line)
         {
             return line.Contains("IFCBUILDINGELEMENTPROXY");
+        }
+
+        private void Report_click(object sender, RoutedEventArgs e)
+        {
+            string repPath = Path.Combine(DirPath, reportName);
+            HandleIfc();
+            Process.Start("notepad", repPath);
+        }
+
+        private void OK_button_Click(object sender, RoutedEventArgs e)
+        {
+            HandleIfc();
+            Close();
         }
     }
 }

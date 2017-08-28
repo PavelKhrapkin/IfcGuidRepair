@@ -5,23 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IfcGuidRepair"
         mc:Ignorable="d"
-        Title="Нормализация Guid IFC файла для Tekla" Height="280" Width="450">
+        Title="Нормализация Guid IFC файла для Tekla" Height="285" Width="480">
     <Grid>
         <StackPanel Orientation="Vertical">
             <Image x:Name="IfcGuidRepair_Logo" HorizontalAlignment="Center" Height="110" Opacity="10"
                    VerticalAlignment="Top" Width="330" Source="IfcGuidRepair_Logo.jpg" />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Height="25" Margin="10,10,10,10">
                 <TextBlock Text="In File" Width="Auto" FontSize="16" FontWeight="Bold" Margin="10,0,0,0"/>
-                <TextBox Name="InFileNameTextBox" Width="290" FontSize="16" Margin="10,0,0,0"/>
-                <Button Content="Browse" FontSize="16" Margin="10,0,0,0" Click="Browse_click"/>
+                <TextBox Name="InFileNameTextBox" Width="295" FontSize="16" Margin="10,0,0,0"/>
+                <Button Content="Browse" FontSize="16" Margin="10,0,0,0" Click="In_Browse_click"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Height="25" Margin="10,10,10,10">
                 <TextBlock Text="Out File" Width="Auto" FontSize="16" FontWeight="Bold" Margin="10,0,0,0"/>
-                <TextBox Name="OutFileNameTextBox" Width="275" FontSize="16" Margin="10,0,0,0"/>
-                <Button Content="Browse" FontSize="16" Margin="10,0,0,0" Click="Browse_click"/>
+                <TextBox Name="OutFileNameTextBox" Width="280" FontSize="16" Margin="10,0,0,0"/>
+                <Button Content="Browse" FontSize="16" Margin="10,0,0,0" Click="Out_Browse_click"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="25" Margin="10,10,15,10">
-                <Button Content=" Report " Background="Yellow"/>
+                <Button Content=" Report " Background="Yellow" Click="Report_click"/>
                 <Button Content=" ? " Margin="15, 0, 0, 0"/>
                 <Button Content=" About " Margin="15,0,0,0"/>
             </StackPanel>

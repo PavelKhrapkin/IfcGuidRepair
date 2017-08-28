@@ -27,8 +27,11 @@ namespace IfcGuidRepair
             {
                 wnd.Show();
             }
-            wnd.HandleIfc();
-            Application.Current.Shutdown();
+            else
+            {
+                wnd.HandleIfc();
+                Application.Current.Shutdown();
+            }
         }
     }
 }
