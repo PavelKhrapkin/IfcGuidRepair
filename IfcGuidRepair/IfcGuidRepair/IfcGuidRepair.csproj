@@ -107,5 +107,8 @@
     <Resource Include="ifc.ico" />
     <Resource Include="IfcGuidRepair_Logo.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="OK.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

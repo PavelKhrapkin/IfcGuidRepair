@@ -11,13 +11,24 @@ namespace IfcGuidRepair
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             MainWindow wnd = new MainWindow();
-            if (e.Args.Length == 1)
+            if(e.Args.Length > 1)
             {
-                wnd.path = e.Args[0];
-                if (!File.Exists(wnd.path)) wnd.Show();
-                wnd.HandleIfc();
-                Application.Current.Shutdown();
-            } 
+                wnd.InPath = e.Args[0];
+                wnd.DirPath = Path.GetDirectoryName(wnd.InPath);
+                wnd.OutPath = e.Args[1];
+            }
+            if(e.Args.Length == 1)
+            {
+                wnd.InPath = e.Args[0];
+                wnd.DirPath = Path.GetDirectoryName(wnd.InPath);
+                wnd.OutPath = Path.Combine(wnd.DirPath, "out.ifc");
+            }
+            if(e.Args.Length < 1 || !File.Exists(wnd.InPath))
+            {
+                wnd.Show();
+            }
+            wnd.HandleIfc();
+            Application.Current.Shutdown();
         }
     }
 }

@@ -21,7 +21,9 @@ namespace IfcGuidRepair
     public partial class MainWindow : Window
     {
 
-        public string path = string.Empty;
+        public string InPath;
+        public string OutPath;
+        public string DirPath;
 
         static StreamReader file;
         static StreamWriter outFile;
@@ -31,6 +33,7 @@ namespace IfcGuidRepair
         public MainWindow()
         {
             InitializeComponent();
+
         }
 
         private void Browse_click(object sender, RoutedEventArgs e)
@@ -53,8 +56,8 @@ namespace IfcGuidRepair
 
         public void HandleIfc()
         {
-            if (!File.Exists(path)) throw new Exception("No file \"" + path + "\" exists");
-            string dir = Path.GetDirectoryName(path);
+            if (!File.Exists(InPath)) throw new Exception("No file \"" + InPath + "\" exists");
+            string dir = Path.GetDirectoryName(InPath);
             string outPath = Path.Combine(dir, "out.ifc");
 
             ///           string outPath = @"C:\Users\khrapkin\Desktop\out.ifc";
@@ -64,7 +67,7 @@ namespace IfcGuidRepair
             string line;
 
             // Read the file and display it line by line.
-            StreamReader file = new System.IO.StreamReader(path);
+            StreamReader file = new System.IO.StreamReader(InPath);
             while ((line = file.ReadLine()) != null)
             {
                 if (!isIfcProxy(line))
