@@ -13,6 +13,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Windows;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace IfcGuidRepair
 {
@@ -26,12 +27,12 @@ namespace IfcGuidRepair
         public string OutPath;
         public string DirPath;
         string reportName = "Report.log";
+        string reportPath;
 
         static StreamReader inFile;
         static StreamWriter outFile;
         static StreamWriter reportFile;
-
-        public bool HandlingComplete = false;
+        Process notepad;
 
         static HashSet<string> guids = new HashSet<string>();
 
@@ -52,6 +53,7 @@ namespace IfcGuidRepair
         {
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             dlg.DefaultExt = ".ifc";
+            dlg.InitialDirectory = DirPath;
 
             // Display OpenFileDialog by calling ShowDialog method
             Nullable<bool> result = dlg.ShowDialog();
@@ -60,10 +62,9 @@ namespace IfcGuidRepair
             if (result == true)
             {
                 // Open document
-                string filename = dlg.FileName;
-                dlg.InitialDirectory = DirPath;
-                InFileNameTextBox.Text = Path.GetFileName(filename);
-                DirPath = Path.GetDirectoryName(filename);
+                InPath = dlg.FileName;
+                InFileNameTextBox.Text = Path.GetFileName(InPath);
+                DirPath = Path.GetDirectoryName(InPath);
             }
         }
 
@@ -71,6 +72,7 @@ namespace IfcGuidRepair
         {
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             dlg.DefaultExt = ".ifc";
+            dlg.InitialDirectory = DirPath;
 
             // Display OpenFileDialog by calling ShowDialog method
             Nullable<bool> result = dlg.ShowDialog();
@@ -79,9 +81,8 @@ namespace IfcGuidRepair
             if (result == true)
             {
                 // Open document
-                string filename = dlg.FileName;
-                dlg.InitialDirectory = DirPath;
-                OutFileNameTextBox.Text = filename;
+                OutPath = dlg.FileName;
+                OutFileNameTextBox.Text = Path.GetFileName(OutPath);
             }
         }
 
@@ -89,9 +90,17 @@ namespace IfcGuidRepair
         {
             if (!File.Exists(InPath)) throw new Exception("No file \"" + InPath + "\" exists");
 
+            //always write outFilein the inFile directory
+            string outName = Path.GetFileName(OutPath);
+            OutPath = Path.Combine(DirPath, outName);
+
             outFile = new StreamWriter(OutPath);
-            reportFile = new StreamWriter(Path.Combine(DirPath, reportName));
-            reportFile.WriteLine("=== Report File: Input=" + InPath + ", Output=" + OutPath);
+            reportPath = Path.Combine(DirPath, reportName);
+            reportFile = new StreamWriter(reportPath);
+            reportFile.WriteLine("=== IfcGuidRepair Report File");
+            reportFile.WriteLine("Input=\t" + InPath);
+            reportFile.WriteLine("Output=\t" + OutPath);
+            reportFile.WriteLine("Report=\t" + reportPath);
 
             int totalGuidsCounter = 0, nonUniqueGuidsCounter = 0;
             string line;
@@ -120,6 +129,7 @@ namespace IfcGuidRepair
             reportFile.WriteLine("=== Total Guids=" + totalGuidsCounter + 
                 " guids, total repaired=" + nonUniqueGuidsCounter +" ===");
             inFile.Close();
+            outFile.Close();
             reportFile.Close();
         }
 
@@ -161,15 +171,28 @@ namespace IfcGuidRepair
 
         private void Report_click(object sender, RoutedEventArgs e)
         {
-            string repPath = Path.Combine(DirPath, reportName);
             HandleIfc();
-            Process.Start("notepad", repPath);
+            notepad = Process.Start("notepad", reportPath);
         }
 
         private void OK_button_Click(object sender, RoutedEventArgs e)
         {
-            HandleIfc();
+            if(notepad != null) try { notepad.Kill(); }  catch { }
+            try { HandleIfc(); } catch { }
             Close();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start("About.mht");
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            string help = "IfcGuidRepair_EN_Help.mht";
+            CultureInfo ci = CultureInfo.InstalledUICulture;
+            if(ci.CompareInfo.Name == "ru-RU") help = "IfcGuidRepair_RU_Help.mht";
+            Process.Start(help);
         }
     }
 }

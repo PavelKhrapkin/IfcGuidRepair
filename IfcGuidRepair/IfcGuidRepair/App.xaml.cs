@@ -1,4 +1,12 @@
-﻿using System.IO;
+﻿/*------------------------------------------------
+ * Pavel Khrapkin NIP Informatica 28.08.2017
+ * 
+ * App.xaml.cs - Strar of the Application IfcGuidRepair
+ *               Parse of the comand-line arguments, and
+ *               start IfsGuidHandling, or if arguments
+ *               not present in comand line - start WPF
+ */
+ using System.IO;
 using System.Windows;
 
 namespace IfcGuidRepair
